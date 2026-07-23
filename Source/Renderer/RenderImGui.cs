@@ -34,15 +34,6 @@ namespace UImGui.Renderer
                 _passData = new PassData();
             }
             
-            public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-            {
-                var commandBuffer = CommandBufferPool.Get("Dear ImGUI");
-                
-                DrawCommandUtils.BuildCommandBuffer(ref commandBuffer, UImGuiUtility.Context.DrawCommands);
-                
-                context.ExecuteCommandBuffer(commandBuffer);
-                CommandBufferPool.Release(commandBuffer);
-            }
 
 #if UNITY_6000_0_OR_NEWER
             public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
@@ -75,6 +66,16 @@ namespace UImGui.Renderer
                 var cmd = context.cmd;
                 
                 DrawCommandUtils.BuildCommandBuffer(ref cmd, data.Commands);
+            }
+#else
+            public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+            {
+                var commandBuffer = CommandBufferPool.Get("Dear ImGUI");
+                
+                DrawCommandUtils.BuildCommandBuffer(ref commandBuffer, UImGuiUtility.Context.DrawCommands);
+                
+                context.ExecuteCommandBuffer(commandBuffer);
+                CommandBufferPool.Release(commandBuffer);
             }
 #endif
         }
